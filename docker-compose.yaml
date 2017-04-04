@@ -1,0 +1,39 @@
+version: '2'
+volumes:
+ data-volume:
+services:
+ rabbitmq:
+  image: rabbitmq:management
+  ports:
+   - "5672:5672"
+   - "15672:15672"
+ db:
+  image: mysql:5.7
+  restart: always
+  ports:
+    - "6606:3306"
+  environment:
+   MYSQL_ROOT_PASSWORD: datawerks
+   MYSQL_DATABASE: datawerks
+   MYSQL_USER: application_user
+   MYSQL_PASSWORD: datawerks
+ file_upload:
+  build:
+   context: .
+   dockerfile: Dockerfile_fileupload
+  ports:
+   - "8080:8080"
+  links:
+   - rabbitmq
+   - db
+  volumes:
+   - data-volume:/usr/fileupload
+ file_transform:
+  build:
+   context: .
+   dockerfile: Dockerfile_filetransform
+  links:
+   - rabbitmq
+   - db
+  volumes:
+   - data-volume:/usr/fileupload

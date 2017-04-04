@@ -1,0 +1,7 @@
+FROM java:8
+VOLUME /tmp
+ADD build/lib/filetransformservice-0.1.0.jar filetransformservice.jar
+ADD build/lib/common-0.1.0.jar common.jar
+RUN bash -c 'touch /filetransformservice.jar'
+RUN bash -c 'touch /common.jar'
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom","-jar","/filetransformservice.jar"]
